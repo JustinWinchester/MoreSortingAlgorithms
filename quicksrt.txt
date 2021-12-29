@@ -1,0 +1,153 @@
+Lecture Quick Sort
+
+1.	The quick sort is a divide-conquer sorting algorithm.  It sorts a unsorted list quickly so that this sorting algorithm is called the quick sort. 
+
+2.	Basic algorithm:
+(1)	pick up an item, called pivot, to cut the list into two halves: left and right such that all the items in the left half
+are less than the pivot and all the items in the right half are equel or bigger than the pivot.  This is show in the following graph:
+
+All items < pivot	pivot	All items > = pivot
+
+Therefore pivot is in the proper position 
+(2) Quick sort the left half
+(3) Quick sort the right half
+
+Algorithm:
+
+void quick_sort( int list[], int begin, int end)
+{
+	int pivot_index;
+	if( begin <= end)// recursive case
+	{
+		partition(list, begin, end, &pivot_index);
+		//pivot_index is a reference
+		quick_sort(list, begin, pivot -1)
+		//go to the left half, recursive call
+		quick_sort(list, pivot +1, end);
+		//go to teh right half and recursive call
+	}
+	else //base case
+		;
+}
+
+3. Algorithm Analysis (the best case: each and every time pivot cut the list into two equel size sublists)
+
+# of cuts	# of sublists	2^n (# of sublistd)
+0		1			2^0
+1		2			2^1
+2		4			2^2
+3		8			2^3
+4		16			2^4
+.....
+k					2^k
+
+When the size of the sublist is 1, and then 2^k = n.
+
+2^k = n
+Now we take log2 on both side of the equation, and then we have:
+
+log2 2^k = log2 n
+k = log2 n
+
+That is, we at most do log2 n operations for each laryer and we totally have n -1 layers, so that we have:
+
+(n-1) log2 n, that is, the complexity of quick sort is O(nlog2 n)
+
+Where n is big enough n^2 is much bigger than n log2 n.  for example,  if n = 100:
+
+n^2 = 100 ^2 = 10000
+nlog2 n = 100 * log2 100 = 100 * 7 = 700 (log2 100 is equel about 7.  log2 128 = log2 2^7 = 7)
+
+10000 is much bigger than 700.  So we can conclude that the quick sort is a very efficient sorting algorithm.
+
+The worst case of quick sort is O(n^2), please prove it if you can.
+
+4. Code please type it and run it.  Have fun!
+
+
+#include <stdlib.h>
+#include <iostream>
+#include <time.h>
+
+#define SIZE 40
+using namespace std;
+
+template <class T>
+void swap(T*, T*);
+
+void partition(int[], int, int, int&);
+void quick_sort(int[], int, int);
+
+int main()
+{
+	int first = 0, last = SIZE, i;
+	int arr[SIZE];
+
+	srand(time(NULL));
+
+	cout<<"Unsorted list: "<<endl;
+	for(i = 0; i < SIZE; i++)
+	{
+		arr[i] = rand()%40;
+		cout<<arr[i]<<" ";
+		if((i+1)%20 == 0)
+			cout<<"\n";
+	}
+	cout<<endl<<endl;
+
+	quick_sort(arr, first, last);
+
+	cout<<"Sorted list:"<<endl;
+	for(i = 0; i < SIZE; i++)
+	{
+		cout<<arr[i]<<" ";
+		if((i+1)%20 == 0)
+			cout<<"\n";
+	}
+	cout<<"\n\n";
+		
+	
+	return 0;
+}
+
+void quick_sort(int arr[], int first, int last)
+{
+	int pivot_index;
+
+	if( first <= last)
+	{
+		partition(arr, first, last, pivot_index);
+
+		quick_sort(arr, first, pivot_index-1);
+		quick_sort(arr, pivot_index+1, last);
+	}
+}
+
+void partition( int arr[], int first, int last, int& pivot_index)
+{
+	int pivot = arr[first];
+
+	int lasts1 = first;
+	int first_unknown;
+
+	for(first_unknown = first + 1;first_unknown <= last; ++first_unknown)
+	{
+		if(arr[first_unknown] < pivot)//s1 section
+		{
+			lasts1++;
+			swap(arr[first_unknown], arr[lasts1]);
+		}
+		//s2 section
+	}
+
+	swap(arr[first], arr[lasts1]); //put the pivot in the proper loc
+	pivot_index = lasts1;
+}
+
+template <class T>
+void swap( T *a, T* b)
+{
+	T c = *a;
+	*a = *b;
+	*b = c;
+}
